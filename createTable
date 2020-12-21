@@ -1,0 +1,256 @@
+-- 테이블 순서는 관계를 고려하여 한 번에 실행해도 에러가 발생하지 않게 정렬되었습니다.
+
+-- Contents Table Create SQL
+CREATE TABLE Contents
+(
+    `contentsIndex`      INT            NOT NULL    AUTO_INCREMENT COMMENT '콘텐츠 인덱스',
+    `contentsName`       VARCHAR(45)    NOT NULL    COMMENT '콘텐츠 이름',
+    `contentsImageURL`   TEXT           NULL        COMMENT '콘텐츠 이름 이미지',
+    `contentsPosterURL`  TEXT           NULL        COMMENT '콘텐츠 포스터 이미지',
+    `genre`              VARCHAR(45)    NULL        COMMENT '콘텐츠 장르',
+    `feature`            VARCHAR(45)    NULL        COMMENT '프로그램 특징',
+    `searchNum`          INT            NOT NULL    DEFAULT 0 COMMENT '검색 수',
+    `likeNum`            INT            NOT NULL    COMMENT '콘텐츠 찜 개수',
+    `distributeCompany`  VARCHAR(45)    NULL        COMMENT '배급사 구분 ( 넷플릭스 오리지널)',
+    `updateTime`         CHAR(1)        NULL        DEFAULT 'N' COMMENT 'N:업뎃없음 ABCDEFG:월화수목금토일',
+    `openingDate`        TIMESTAMP      NULL        COMMENT '콘텐츠 실제 개봉일자',
+    `openingNetflix`     TIMESTAMP      NULL        COMMENT '콘텐츠 넷플릭스 공개날짜',
+    `open`               CHAR(1)        NULL        DEFAULT 'N' COMMENT '공개 여부(개봉 예정) N:안함 Y:완료 M:공개예정',
+    `preview`            TEXT           NULL        COMMENT '콘텐츠 예고 영상',
+    `introduction`       TEXT           NULL        COMMENT '콘텐츠 소개글',
+    `rating`             VARCHAR(45)    NULL        COMMENT '관람등급, G:누구나, PG-15:15세이하, NC:청불',
+    `highDefinition`     VARCHAR(45)    NULL        COMMENT '해상도',
+    `isDeleted`          CHAR(1)        NULL        DEFAULT 'N' COMMENT 'N:활성 Y: 삭제',
+    `createdAt`          TIMESTAMP      NULL        DEFAULT CURRENT_TIMESTAMP COMMENT '정보 생성 시간',
+    `updatedAt`          TIMESTAMP      NULL        DEFAULT current_timestamp on update current_timestamp COMMENT '정보 수정 시간',
+    PRIMARY KEY (contentsIndex)
+);
+
+ALTER TABLE Contents COMMENT '전체 콘텐츠 정보 ( 프로그램 )';
+
+ALTER TABLE Contents
+    ADD CONSTRAINT UC_contentsIndex UNIQUE (contentsIndex);
+
+
+-- Contents Table Create SQL
+CREATE TABLE User
+(
+    `userIndex`            INT            NOT NULL    AUTO_INCREMENT COMMENT '유저 인덱스',
+    `userID`               VARCHAR(45)    NOT NULL    COMMENT '유저 아이디',
+    `userName`             VARCHAR(45)    NOT NULL    COMMENT '유저 이름',
+    `userProfileImageURL`  TEXT           NULL        COMMENT '유저 프로필 사진',
+    `isDeleted`            CHAR(1)        NULL        DEFAULT 'N' COMMENT 'N:활성유저 Y:탈퇴유저',
+    `createdAt`            TIMESTAMP      NULL        DEFAULT CURRENT_TIMESTAMP COMMENT '정보 생성 시간',
+    `updatedAt`            TIMESTAMP      NULL        DEFAULT current_timestamp on update current_timestamp COMMENT '정보 수정 시간',
+    `userEmail`            VARCHAR(45)    NULL        COMMENT '유저 이메일',
+    `smartSave`            CHAR(1)        NULL        DEFAULT 'N' COMMENT '스마트 저장 여부 N, Y',
+    PRIMARY KEY (userIndex, userID)
+);
+
+ALTER TABLE User COMMENT '회원가입된 유저 정보';
+
+ALTER TABLE User
+    ADD CONSTRAINT UC_userIndex UNIQUE (userIndex);
+
+
+-- Contents Table Create SQL
+CREATE TABLE Video
+(
+    `videoIndex`         INT             NOT NULL    AUTO_INCREMENT COMMENT '영상 인덱스',
+    `contentsIndex`      INT             NOT NULL    COMMENT '속한 콘텐츠 번호( 프로그램 번호)',
+    `videoURL`           TEXT            NOT NULL    COMMENT '영상 자체',
+    `videoLength`        INT UNSIGNED    NOT NULL    COMMENT '비디오 영상 길이',
+    `capacity`           INT UNSIGNED    NOT NULL    COMMENT '비디오 용량',
+    `thumbnailImageURL`  TEXT            NULL        COMMENT '비디오 썸네일',
+    `videoName`          VARCHAR(45)     NULL        COMMENT '영상 제목',
+    `videoIntro`         TEXT            NULL        COMMENT '영상 소개글(줄거리)',
+    `isDeleted`          CHAR(1)         NULL        DEFAULT 'N' COMMENT 'N:활성 Y: 삭제',
+    `createdAt`          TIMESTAMP       NULL        DEFAULT CURRENT_TIMESTAMP COMMENT '정보 생성 시간',
+    `updatedAt`          TIMESTAMP       NULL        DEFAULT current_timestamp on update current_timestamp COMMENT '정보 수정 시간',
+    PRIMARY KEY (videoIndex)
+);
+
+ALTER TABLE Video COMMENT '영상 하나하나';
+
+ALTER TABLE Video
+    ADD CONSTRAINT FK_Video_contentsIndex_Contents_contentsIndex FOREIGN KEY (contentsIndex)
+        REFERENCES Contents (contentsIndex) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE Video
+    ADD CONSTRAINT UC_videoIndex UNIQUE (videoIndex);
+
+
+-- Contents Table Create SQL
+CREATE TABLE LikeContents
+(
+    `contentsIndex`  INT          NOT NULL    COMMENT '콘텐츠 인덱스',
+    `userIndex`      INT          NOT NULL    COMMENT '유저 인덱스',
+    `isLiked`        CHAR(1)      NULL        DEFAULT 'N' COMMENT 'N: 안함 Y : 찜한 상태',
+    `createdAt`      TIMESTAMP    NULL        DEFAULT CURRENT_TIMESTAMP COMMENT '정보 생성 시간',
+    `updatedAt`      TIMESTAMP    NULL        DEFAULT current_timestamp on update current_timestamp COMMENT '정보 수정 시간',
+    PRIMARY KEY (contentsIndex, userIndex)
+);
+
+ALTER TABLE LikeContents COMMENT '유저 별 찜한 콘텐츠 상태';
+
+ALTER TABLE LikeContents
+    ADD CONSTRAINT FK_LikeContents_contentsIndex_Contents_contentsIndex FOREIGN KEY (contentsIndex)
+        REFERENCES Contents (contentsIndex) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE LikeContents
+    ADD CONSTRAINT FK_LikeContents_userIndex_User_userIndex FOREIGN KEY (userIndex)
+        REFERENCES User (userIndex) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+
+-- Contents Table Create SQL
+CREATE TABLE WatchVideo
+(
+    `videoIndex`   INT             NOT NULL    COMMENT '영상 인덱스',
+    `userIndex`    INT             NOT NULL    COMMENT '유저 인덱스',
+    `isWatched`    CHAR(1)         NULL        DEFAULT 'N' COMMENT 'N:시청 안함 Y:시청완료 M:시청 중',
+    `watchTime`    TIMESTAMP       NULL        DEFAULT current_timestamp on update current_timestamp COMMENT '현재 시청 시각',
+    `watchLength`  INT UNSIGNED    NOT NULL    DEFAULT 0 COMMENT '유저의 영상 재생 시점 ( 재생 정도)',
+    `isDeleted`    CHAR(1)         NULL        DEFAULT 'N' COMMENT 'N:활성 Y: 삭제',
+    `createdAt`    TIMESTAMP       NULL        DEFAULT CURRENT_TIMESTAMP COMMENT '정보 생성 시간',
+    PRIMARY KEY (videoIndex, userIndex)
+);
+
+ALTER TABLE WatchVideo COMMENT '유저 별 영상 시청 상태';
+
+ALTER TABLE WatchVideo
+    ADD CONSTRAINT FK_WatchVideo_videoIndex_Video_videoIndex FOREIGN KEY (videoIndex)
+        REFERENCES Video (videoIndex) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE WatchVideo
+    ADD CONSTRAINT FK_WatchVideo_userIndex_User_userIndex FOREIGN KEY (userIndex)
+        REFERENCES User (userIndex) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+
+-- Contents Table Create SQL
+CREATE TABLE alarmContents
+(
+    `contentsIndex`  INT          NOT NULL    COMMENT '콘텐츠 인덱스',
+    `userIndex`      INT          NOT NULL    COMMENT '유저 인덱스',
+    `isAlarmed`      CHAR(1)      NULL        COMMENT 'N:안함 Y: 알람설정 함',
+    `createdAt`      TIMESTAMP    NULL        DEFAULT CURRENT_TIMESTAMP COMMENT '정보 생성 시간',
+    `updatedAt`      TIMESTAMP    NULL        DEFAULT current_timestamp on update current_timestamp COMMENT '정보 수정 시간',
+    PRIMARY KEY (contentsIndex, userIndex)
+);
+
+ALTER TABLE alarmContents COMMENT '유저 별 알람 설정한 콘텐츠 상태 ( 공개 예정에서 )';
+
+ALTER TABLE alarmContents
+    ADD CONSTRAINT FK_alarmContents_contentsIndex_Contents_contentsIndex FOREIGN KEY (contentsIndex)
+        REFERENCES Contents (contentsIndex) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE alarmContents
+    ADD CONSTRAINT FK_alarmContents_userIndex_User_userIndex FOREIGN KEY (userIndex)
+        REFERENCES User (userIndex) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+
+-- Contents Table Create SQL
+CREATE TABLE SaveVideo
+(
+    `contentsIndex`  INT          NOT NULL    COMMENT '콘텐츠 인덱스',
+    `videoIndex`     INT          NOT NULL    COMMENT '영상 인덱스',
+    `userIndex`      INT          NOT NULL    COMMENT '유저 인덱스',
+    `isSaved`        CHAR(1)      NULL        DEFAULT 'N' COMMENT 'N:저장아직, Y:저장완료, M:저장 중',
+    `createdAt`      TIMESTAMP    NULL        DEFAULT CURRENT_TIMESTAMP COMMENT '정보 생성 시간',
+    `updatedAt`      TIMESTAMP    NULL        DEFAULT current_timestamp on update current_timestamp COMMENT '정보 수정 시간',
+    PRIMARY KEY (videoIndex, userIndex)
+);
+
+ALTER TABLE SaveVideo
+    ADD CONSTRAINT FK_SaveVideo_contentsIndex_Contents_contentsIndex FOREIGN KEY (contentsIndex)
+        REFERENCES Contents (contentsIndex) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE SaveVideo
+    ADD CONSTRAINT FK_SaveVideo_videoIndex_Video_videoIndex FOREIGN KEY (videoIndex)
+        REFERENCES Video (videoIndex) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE SaveVideo
+    ADD CONSTRAINT FK_SaveVideo_userIndex_User_userIndex FOREIGN KEY (userIndex)
+        REFERENCES User (userIndex) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+
+-- Contents Table Create SQL
+CREATE TABLE ContentsSeason
+(
+    `contentsIndex`  INT            NOT NULL    COMMENT '콘텐츠 인덱스',
+    `videoIndex`     INT            NOT NULL    COMMENT '비디오 영상 인덱스',
+    `seasonName`     VARCHAR(45)    NOT NULL    DEFAULT 'season1' COMMENT '최신 순 나오는 시즌 이름',
+    `pSeason`        VARCHAR(45)    NULL        COMMENT '부모 시즌',
+    `isDeleted`      CHAR(1)        NULL        DEFAULT 'N' COMMENT 'N:활성 Y: 삭제',
+    `createdAt`      TIMESTAMP      NULL        DEFAULT CURRENT_TIMESTAMP COMMENT '정보 생성 시간',
+    `updatedAt`      TIMESTAMP      NULL        DEFAULT current_timestamp on update current_timestamp COMMENT '정보 수정 시간',
+    PRIMARY KEY (contentsIndex, videoIndex, seasonName)
+);
+
+ALTER TABLE ContentsSeason COMMENT '시즌';
+
+ALTER TABLE ContentsSeason
+    ADD CONSTRAINT FK_ContentsSeason_contentsIndex_Contents_contentsIndex FOREIGN KEY (contentsIndex)
+        REFERENCES Contents (contentsIndex) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE ContentsSeason
+    ADD CONSTRAINT FK_ContentsSeason_videoIndex_Video_videoIndex FOREIGN KEY (videoIndex)
+        REFERENCES Video (videoIndex) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+
+-- Contents Table Create SQL
+CREATE TABLE evaluateContents
+(
+    `contentsIndex`  INT          NOT NULL    COMMENT '콘텐츠 인덱스',
+    `userIndex`      INT          NOT NULL    COMMENT '유저 인덱스',
+    `isEvaluated`    CHAR(1)      NULL        COMMENT 'N:안함 G:좋아요 B:싫어요',
+    `createdAt`      TIMESTAMP    NULL        DEFAULT CURRENT_TIMESTAMP COMMENT '정보 생성 시간',
+    `updatedAt`      TIMESTAMP    NULL        DEFAULT current_timestamp on update current_timestamp COMMENT '정보 수정 시간',
+    PRIMARY KEY (contentsIndex, userIndex)
+);
+
+ALTER TABLE evaluateContents COMMENT '유저 별 콘텐츠 평가 여부';
+
+ALTER TABLE evaluateContents
+    ADD CONSTRAINT FK_evaluateContents_contentsIndex_Contents_contentsIndex FOREIGN KEY (contentsIndex)
+        REFERENCES Contents (contentsIndex) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+ALTER TABLE evaluateContents
+    ADD CONSTRAINT FK_evaluateContents_userIndex_User_userIndex FOREIGN KEY (userIndex)
+        REFERENCES User (userIndex) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+
+-- Contents Table Create SQL
+CREATE TABLE Performer
+(
+    `performerID`    INT            NOT NULL    COMMENT '출연자 인덱스',
+    `performerName`  VARCHAR(45)    NULL        COMMENT '출연자 이름',
+    `contentsIndex`  INT            NOT NULL    COMMENT '콘텐츠 인덱스 ( 출연작품)',
+    `isDeleted`      CHAR(1)        NULL        DEFAULT 'N' COMMENT 'N:활성 Y: 삭제',
+    `createdAt`      TIMESTAMP      NULL        DEFAULT CURRENT_TIMESTAMP COMMENT '정보 생성 시간',
+    `updatedAt`      TIMESTAMP      NULL        DEFAULT current_timestamp on update current_timestamp COMMENT '정보 수정 시간',
+    PRIMARY KEY (performerID, contentsIndex)
+);
+
+ALTER TABLE Performer
+    ADD CONSTRAINT FK_Performer_contentsIndex_Contents_contentsIndex FOREIGN KEY (contentsIndex)
+        REFERENCES Contents (contentsIndex) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+
+-- Contents Table Create SQL
+CREATE TABLE Director
+(
+    `directorIndex`  INT            NOT NULL    COMMENT '감독 인덱스',
+    `directorName`   VARCHAR(45)    NULL        COMMENT '감독 이름',
+    `contentsIndex`  INT            NOT NULL    COMMENT '콘텐츠 인덱스 ( 감독 작품)',
+    `isDeleted`      CHAR(1)        NULL        DEFAULT 'N' COMMENT 'N:활성 Y: 삭제',
+    `createdAt`      TIMESTAMP      NULL        DEFAULT CURRENT_TIMESTAMP COMMENT '정보 생성 시간',
+    `updatedAt`      TIMESTAMP      NULL        DEFAULT current_timestamp on update current_timestamp COMMENT '정보 수정 시간',
+    PRIMARY KEY (directorIndex, contentsIndex)
+);
+
+ALTER TABLE Director
+    ADD CONSTRAINT FK_Director_contentsIndex_Contents_contentsIndex FOREIGN KEY (contentsIndex)
+        REFERENCES Contents (contentsIndex) ON DELETE RESTRICT ON UPDATE RESTRICT;
+
+
+ALTER TABLE Contents MODIFY updateTime varchar(45) DEFAULT 'N' COMMENT 'N:업뎃없음 ABCDEFG:월화수목금토일';
