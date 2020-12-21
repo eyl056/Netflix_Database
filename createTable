@@ -254,3 +254,5 @@ ALTER TABLE Director
 
 
 ALTER TABLE Contents MODIFY updateTime varchar(45) DEFAULT 'N' COMMENT 'N:업뎃없음 ABCDEFG:월화수목금토일';
+
+ALTER TABLE Contents ADD top5 char(1) NULL DEFAULT 'N' COMMENT 'Y:top5 N:아님';
