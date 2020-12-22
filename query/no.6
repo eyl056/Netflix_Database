@@ -1,0 +1,26 @@
+-- 6번 화면 ( 저장한 콘텐츠 중 하나 자세히 )
+-- ----------------------------------- 저장 콘텐츠 자세히 ------------------------------------
+select userProfileImageURL
+from User
+where userIndex = 1;
+
+select videoIndex
+from SaveVideo
+where userIndex = 1 and isSaved = 'Y';
+
+# 최종 쿼리 : 저장한 콘텐츠 자세히
+select distinct videoName, videoLength, capacity, isSaved
+from Video
+    inner join (
+        select videoIndex
+        from SaveVideo
+        where userIndex = 1 and isSaved = 'Y'
+    ) SaveVideoDetail
+    inner join (
+        select isSaved, videoIndex
+        from SaveVideo
+        where userIndex = 1 and isSaved = 'Y' or isSaved = 'M'
+    ) Saved
+where SaveVideoDetail.videoIndex = Video.videoIndex and
+      Saved.videoIndex = Video.videoIndex;
+-- ---------------------------------------------------------------------------------------
