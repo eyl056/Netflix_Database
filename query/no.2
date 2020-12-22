@@ -20,15 +20,12 @@ order by LikedContents.updatedAt desc;
 
 
 
-
-
 -- 2번 화면(메인 화면 - 지금 뜨는 콘텐츠)
 -- -------------------------검색어가 많은 5개 콘텐츠 가져오기-----------------------------------
 select contentsPosterURL, updateTime, top5, distributeCompany
 from Contents
 order by searchNum desc limit 5;
 -- ---------------------------------------------------------------------------------------
-
 
 
 
