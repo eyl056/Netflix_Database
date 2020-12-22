@@ -1,0 +1,77 @@
+-- 5번 화면(저장한 콘텐츠 목록)
+-- -------------------------------- 저장한 콘텐츠 목록 --------------------------------------
+select userProfileImageURL, userName, smartSave
+from User
+where userIndex = 1;
+
+# 저장한 비디오 용량 가져오기
+select SUM(capacity)
+from Video
+    inner join (
+        select videoIndex
+        from SaveVideo
+        where isSaved = 'Y'
+    ) Capacity
+where Capacity.videoIndex = Video.videoIndex;
+
+
+# 저장 중이거나 저장 완료한 비디오의 콘텐츠와 그 콘텐츠의 저장된 비디오 개수 가져오기
+select distinct contentsIndex, count, isSaved,
+                userProfileImageURL, userName, smartSave
+from SaveVideo
+    inner join(
+        select COUNT(*) as count
+        from SaveVideo
+        where userIndex = 1 and isSaved = 'M' or isSaved = 'Y'
+        group by contentsIndex
+    ) CountVideo
+    inner join (
+        select userProfileImageURL, userName, smartSave
+        from User
+        where userIndex = 1
+    ) SmartSaveUser
+    inner join (
+        select videoIndex
+        from SaveVideo
+        where isSaved = 'Y'
+    ) Capacity
+where userIndex = 1 and isSaved = 'M' or isSaved = 'Y';
+
+
+# 최종 쿼리
+select distinct contentsPosterURL,
+       distributeCompany,
+       contentsName, rating, count,
+       userProfileImageURL, userName, smartSave,
+                 totalCapacity,
+       IF(EXISTS(select * where isSaved = 'M'),'M', 'Y' ) ingSave
+from Contents
+    inner join (
+        select distinct contentsIndex, count, isSaved,
+                        userProfileImageURL, userName, smartSave
+        from SaveVideo
+            inner join(
+                select COUNT(*) as count
+                from SaveVideo
+                where userIndex = 1 and isSaved in ('M', 'Y')
+                group by contentsIndex
+            ) CountVideo
+            inner join (
+                select userProfileImageURL, userName, smartSave
+                from User
+                where userIndex = 1
+            ) SmartSaveUser
+        where userIndex = 1 and isSaved in ('M', 'Y')
+    ) Saving
+    inner join (
+        select SUM(capacity) as totalCapacity
+        from Video
+            inner join (
+                select videoIndex
+                from SaveVideo
+                where isSaved = 'Y'
+            ) Capacity
+        where Capacity.videoIndex = Video.videoIndex
+    ) Capacity2
+where Saving.contentsIndex = Contents.contentsIndex;
+-- ---------------------------------------------------------------------------------------
