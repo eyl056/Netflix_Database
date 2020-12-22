@@ -1,0 +1,41 @@
+-- 3번 화면(공개예정 콘텐츠)
+-- -------------------------시청 중인 콘텐츠 가져오기-----------------------------------------
+select userProfileImageURL
+from User;
+
+# 콘텐츠 중 공개예정인 콘텐츠 불러오기
+select contentsIndex
+from Contents
+where open = 'M';
+
+# 공개예정인 콘텐츠의 사용자의 알람 여부 가져오기
+select isAlarmed, contentsIndex
+from alarmContents
+    inner join (
+        select contentsIndex
+        from Contents
+        where open = 'M'
+    ) Mopen
+where Mopen.contentsIndex = alarmContents.contentsIndex and
+      userIndex = 1;
+
+# 공개예정인 콘텐츠 가져오고 나의 알람 여부 가져오기
+select preview, contentsImageURL,
+       isAlarmed, openingNetflix,
+       contentsName, introduction,
+       genre, feature, distributeCompany
+from Contents
+    inner join (
+        select isAlarmed, Mopen.contentsIndex
+        from alarmContents
+            inner join (
+                select contentsIndex
+                from Contents
+                where open = 'M'
+            ) Mopen
+        where Mopen.contentsIndex = alarmContents.contentsIndex and
+              userIndex = 1
+    ) MMopen
+where MMopen.contentsIndex = Contents.contentsIndex;
+
+-- ---------------------------------------------------------------------------------------
