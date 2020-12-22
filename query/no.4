@@ -1,0 +1,7 @@
+-- 4번 화면(검색화면 - 최다 검색어)
+-- ------------------------------------ 최다검색어 -----------------------------------------
+select contentsPosterURL, contentsImageURL, top5,
+       distributeCompany, updateTime,contentsName
+from Contents
+order by searchNum desc limit 5;
+-- ---------------------------------------------------------------------------------------
