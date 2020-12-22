@@ -1,0 +1,84 @@
+-- 2번 화면(메인 화면 - 내가 찜한 콘텐츠)
+-- -------------------------LikeContents 콘텐츠 가져오기-----------------------------------------
+# 좋아하는 콘텐츠 불러오기
+select contentsIndex, updatedAt
+from LikeContents
+where userIndex = 1 and isLiked = 'Y';
+
+# 최종 쿼리 : 불러온 콘텐츠 인덱스로부터 정보 가져오기 (가장 최신에 찜한 것부터 호출)
+select Contents.contentsPosterURL, top5, updateTime, distributeCompany
+from Contents
+    inner join (
+        select contentsIndex, updatedAt
+        from LikeContents
+        where userIndex = 1 and isLiked = 'Y'
+    ) LikedContents
+where LikedContents.contentsIndex = Contents.contentsIndex
+order by LikedContents.updatedAt desc;
+
+-- ---------------------------------------------------------------------------------------
+
+
+
+
+
+-- 2번 화면(메인 화면 - 지금 뜨는 콘텐츠)
+-- -------------------------검색어가 많은 5개 콘텐츠 가져오기-----------------------------------
+select contentsPosterURL, updateTime, top5, distributeCompany
+from Contents
+order by searchNum desc limit 5;
+-- ---------------------------------------------------------------------------------------
+
+
+
+
+-- 2번 화면(메인 화면 - 오늘 한국의 TOP 10 콘텐츠)
+-- -------------------------시청 수가 top5인 콘텐츠 가져오기-----------------------------------------
+select contentsPosterURL, updateTime, top5, distributeCompany
+from Contents
+where top5 = 'Y'
+order by watchNum desc;
+-- ---------------------------------------------------------------------------------------
+
+
+-- 2번 화면(메인 화면 - netflix 오리지널)
+-- -------------------------넷플릭스 오리지널 중 최신 콘텐츠 가져오기-----------------------------------------
+select contentsPosterURL
+from Contents
+where distributeCompany = 'netflix'
+order by updatedAt desc;
+-- ---------------------------------------------------------------------------------------
+
+
+-- 2번 화면(메인 화면 - '내가 봤던 콘텐츠'와 비슷한 콘텐츠)
+-- -------------------------시청 완료한 콘텐츠와 비슷한 가져오기--------------------------------
+select distinct contentsPosterURL, top5, distributeCompany, updateTime,
+       genreRandom.watchedContentsName
+from Contents
+    inner join (
+        select
+            substring_index(substring_index(selectedGenre.genre, ',', 1),',',-1) genre1,
+            substring_index(substring_index(selectedGenre.genre, ',', 2),',',-1) genre2,
+            substring_index(substring_index(selectedGenre.genre, ',', 3),',',-1) genre3,
+            substring_index(substring_index(selectedGenre.genre, ',', 4),',',-1) genre4,
+            selectedGenre.contentsName as watchedContentsName
+        from(
+            select genre, contentsName
+            from Contents
+                inner join (
+                    select contentsIndex
+                    from Video
+                        inner join (
+                            select videoIndex
+                            from WatchVideo
+                            where userIndex = 1 AND isWatched = 'Y' order by rand() limit 1
+                        ) RandomVideo on RandomVideo.videoIndex = Video.videoIndex
+                ) RandomContent on RandomContent.contentsIndex = Contents.contentsIndex) selectedGenre
+    ) genreRandom
+    inner join LikeContents as LC
+where find_in_set(genreRandom.genre1,Contents.genre) or
+      find_in_set(genreRandom.genre2,Contents.genre) or
+      find_in_set(genreRandom.genre3,Contents.genre)
+      order by rand() limit 10;
+
+-- ---------------------------------------------------------------------------------------
