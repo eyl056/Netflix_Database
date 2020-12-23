@@ -1,0 +1,17 @@
+-- 9번 화면
+-- ---------------------------------- 출연자 눌렀을 때 --------------------------------------
+select performerName,
+       contentsPosterURL,
+       updateTime,
+       distributeCompany,
+       top5
+from Contents
+    inner join (
+        select distinct performerID,
+                        performerName,
+                        contentsIndex
+        from Performer
+    ) Performer
+where Performer.performerID = 3 and
+      Contents.contentsIndex = Performer.contentsIndex;
+-- ---------------------------------------------------------------------------------------
