@@ -1,0 +1,11 @@
+
+select Contents.contentsName,
+       GROUP_CONCAT(distinct performerName SEPARATOR ', ') as performers,
+       GROUP_CONCAT(distinct directorName SEPARATOR ', ') as directors,
+       rating,
+       genre,
+       feature
+from Contents, Performer, Director
+where Performer.contentsIndex = 6 and
+      Contents.contentsIndex = 6 and
+      Director.contentsIndex = 6;
