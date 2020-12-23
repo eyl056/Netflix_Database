@@ -1,0 +1,19 @@
+-- 10번 화면
+-- ---------------------------------- 내가 찜한 콘텐츠 -------------------------------------
+select userProfileImageURL
+from User
+where userIndex = 1;
+
+select contentsIndex
+from LikeContents
+where userIndex = 1 and isLiked = 'Y';
+
+# 최종 쿼리
+select contentsPosterURL,
+       updateTime,
+       distributeCompany,
+       top5
+from Contents, LikeContents, User
+where Contents.contentsIndex = LikeContents.contentsIndex and
+      User.userIndex = 1 and isLiked = 'Y';
+-- ---------------------------------------------------------------------------------------
