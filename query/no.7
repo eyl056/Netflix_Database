@@ -1,0 +1,88 @@
+-- 7번 화면
+-- -------------------------------------- 콘텐츠 ----------------------------------------
+
+# 콘텐츠의 비디오 가져오기
+select videoIndex
+from Video
+where contentsIndex = 6;
+
+# 선택한 콘텐츠를 본 정도
+select isWatched, WatchVideo.videoIndex, watchLength
+from WatchVideo
+    inner join (
+        select videoIndex
+        from Video
+        where contentsIndex = 6
+    ) VideoDetail
+where VideoDetail.videoIndex = WatchVideo.videoIndex
+order by watchTime desc;
+
+# 위쪽 화면 최종 쿼리
+select userProfileImageURL,
+       preview,
+       distributeCompany,
+       contentsName,
+       year(openingDate) as openingYear,
+       concat('시즌 ',seasonNum,'개') as seasonNum,
+       highDefinition,
+       rating,
+       seasonName,
+       videoName,
+       introduction,
+       watchLength,
+       videoIntro,
+       GROUP_CONCAT(distinct performerName SEPARATOR ', ') as performers,
+       directorName
+from Performer, Director, Contents, User, Video
+    inner join (
+        select seasonName, count(distinct contentsIndex) as seasonNum
+        from ContentsSeason
+        where ContentsSeason.contentsIndex = 6
+    ) Season
+    inner join (
+        select isWatched, WatchVideo.videoIndex, watchLength
+        from WatchVideo
+            inner join (
+                select videoIndex
+                from Video
+                where contentsIndex = 6
+            ) VideoDetail
+        where VideoDetail.videoIndex = WatchVideo.videoIndex
+        order by watchTime desc
+    ) Watched
+
+where Performer.contentsIndex = 6 and
+      Director.contentsIndex = 6 and
+      Contents.contentsIndex = 6 and
+      Video.contentsIndex = 6 and
+      userIndex = 1;
+
+
+# 아래쪽 화면 최종 쿼리 (비디오 나열)
+select distinct seasonName,
+                videoURL,
+                thumbnailImageURL,
+                videoName,
+                videoIntro,
+                videoLength,
+                watchTime,
+                isSaved
+from Video
+    inner join (
+        select distinct *
+        from WatchVideo
+        where userIndex = 1
+    ) WatchVideo
+    inner join SaveVideo
+    inner join (
+        select distinct seasonName
+        from ContentsSeason
+        where contentsIndex = 6
+    ) ContentsSeason
+where Video.contentsIndex = 6 and
+      WatchVideo.videoIndex = Video.videoIndex and
+      SaveVideo.contentsIndex = Video.contentsIndex and
+      SaveVideo.userIndex = 1
+order by Video.videoIndex asc;
+
+-- ---------------------------------------------------------------------------------------
