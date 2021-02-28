@@ -187,13 +187,13 @@ exports.signIn = async function (req, res) {
 03. userProfile API = 유저 프로필 정보
 */
 exports.userProfileInfo = async function (req, res) {
-    const userID = req.params.userId
-    logger.info(`${req.params.userId}`);
+    const userID = req.params.userId;
+    
     try {
         const [userProfileInfoRows] = await userDao.selectUserProfileInfo(userID)
 
         return res.json({
-            userInfo: userProfileInfoRows[0],
+            userInfo: userProfileInfoRows,
             isSuccess: true,
             code: 200,
             message: "유저 프로필 정보 조회 성공"
