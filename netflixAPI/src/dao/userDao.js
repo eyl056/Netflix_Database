@@ -54,8 +54,65 @@ async function insertUserInfo(insertUserInfoParams) {
     return insertUserInfoRow;
 }
 
+/*
+02.signIn API = 로그인
+*/
+// 로그인 아이디, 비밀번호 확인
+async function selectUserInfo(userID, password) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const selectUserInfoQuery = `
+                        SELECT userName, userProfileImageURL, userEmail
+                        FROM User
+                        WHERE userID = ? AND password = ?;
+                        `;
+
+    let selectUserInfoParams = [userID, password];
+    const [userInfoRows] = await connection.query(
+        selectUserInfoQuery,
+        selectUserInfoParams
+    )
+    return [userInfoRows];
+}
+
+// 로그인 아이디 확인
+async function selectUserIDInfo(userID) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const selectUserIDInfoQuery = `
+                        SELECT userName, userProfileImageURL, userEmail
+                        FROM User
+                        WHERE userID = ?;
+                        `;
+
+    let selectUserIDInfoParams = [userID];
+    const [userIDInfoRows] = await connection.query(
+        selectUserIDInfoQuery,
+        selectUserIDInfoParams
+    )
+    return [userIDInfoRows];
+}
+
+// 로그인 비밀번호 확인
+async function selectPasswordInfo(password) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const selectPasswordInfoQuery = `
+                        SELECT userName, userProfileImageURL, userEmail
+                        FROM User
+                        WHERE password = ?;
+                        `;
+
+    let selectPasswordParams = [password];
+    const [passwordInfoRows] = await connection.query(
+        selectPasswordInfoQuery,
+        selectPasswordParams
+    )
+    return [passwordInfoRows];
+}
+
 module.exports = {
     userIDCheck,
     userEmailCheck,
     insertUserInfo,
-}
+    selectUserInfo,
+    selectUserIDInfo,
+    selectPasswordInfo,
+};

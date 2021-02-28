@@ -4,6 +4,8 @@ const regexEmail = require('regex-email');
 
 const userDao = require('../dao/userDao');
 const { constants } = require('buffer');
+//const Connection = require('mysql2/typings/mysql/lib/Connection');
+const { logger } = require('../../config/winston');
 
 /*
 01.signUp API = 회원가입
@@ -103,3 +105,80 @@ exports.signUp = async function (req, res) {
 /*
 02.signIn API = 로그인
 */
+exports.signIn = async function (req, res) {
+    const {
+        userID, password
+    } = req.body;
+
+    if (!userID) return res.json({
+        isSuccess: false,
+        code: 301, 
+        message: "아이디를 입력해주세요."
+    });
+
+    if(userID.length > 20) return res.json({
+        isSuccess:false,
+        code: 305,
+        message: "아이디는 20자 미만으로 입력해주세요."
+    });
+
+    if(!password) return res.json({
+        isSuccess: false,
+        code: 304,
+        message: "비밀번호를 입력해주세요."
+    });
+
+    if(password.length < 6 || password.length > 20) return res.json({
+        isSuccess: false,
+        code: 307, 
+        message: "비밀번호는 6자 이상 20자 미만으로 입력해주세요."
+    });
+
+    try {
+        const [userIDInfoRows] = await userDao.selectUserIDInfo(userID)
+
+        if (userIDInfoRows[0] == null) {
+            //connection.release();
+            return res.json({
+                isSuccess: false,
+                code: 310,
+                message: "아이디를 다시 입력해주세요."
+            });
+        }
+
+        const [passwordInfoRows] = await userDao.selectPasswordInfo(password)
+
+        if (passwordInfoRows[0] == null) {
+            //connection.release();
+            return res.json({
+                isSuccess: false,
+                code: 310,
+                message: "비밀번호를 다시 입력해주세요."
+            });
+        }
+
+        const [userInfoRows] = await userDao.selectUserInfo(userID, password)
+
+        if (userInfoRows[0] == null) {
+            //connection.release();
+            return res.json({
+                isSuccess: false,
+                code: 310,
+                message: "일치하는 회원정보가 없습니다. 회원가입을 먼저 해주세요."
+            });
+        }
+        else {
+            return res.json({
+                userInfo: userInfoRows[0],
+                isSuccess: true,
+                code: 200,
+                message: "로그인 성공"
+            });
+        }
+        
+    } catch (err) {
+        logger.error(`App - SignIn Query error\n: ${JSON.stringify(err)}`);
+        //connection.release();
+        return false;
+    }
+};
