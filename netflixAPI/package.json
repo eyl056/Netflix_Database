@@ -16,6 +16,8 @@
     "mysql": "^2.18.1",
     "mysql2": "^2.2.5",
     "mysql2-promise": "^0.1.4",
-    "regex-email": "^1.0.2"
+    "regex-email": "^1.0.2",
+    "winston": "^3.3.3",
+    "winston-daily-rotate-file": "^4.5.0"
   }
 }

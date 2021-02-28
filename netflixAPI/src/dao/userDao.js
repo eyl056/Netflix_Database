@@ -1,4 +1,4 @@
-const { pool } = require("C:/Users/eunyoung/Desktop/netflixAPI/config/database");
+const { pool } = require("C:/Users/eunyoung/Documents/GitHub/Netflix_Server/netflixAPI/config/database");
 
 async function userIDCheck(userID) {
     const connection = await pool.getConnection(async (conn) => conn);
