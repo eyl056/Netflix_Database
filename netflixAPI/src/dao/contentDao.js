@@ -62,8 +62,26 @@ async function popularContentInfo() {
     return popularContentRows;
 }
 
+// 오늘 한국 TOP5 콘텐츠
+async function todayTop5ContentInfo() {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const selectTodayTop5ContentQuery =   `
+                                SELECT contentsPosterURL, updateTime, top5, distributeCompany
+                                FROM Contents
+                                WHERE top5 = 'Y'
+                                ORDER BY watchNum DESC;
+                                        `;
+    const todayTop5ContentRows = await connection.query(
+        selectTodayTop5ContentQuery
+    );
+    connection.release();
+
+    return todayTop5ContentRows;
+}
+
 module.exports = {
     favoriteContentInfo,
     mainFavoriteContentInfo,
     popularContentInfo,
+    todayTop5ContentInfo,
 };

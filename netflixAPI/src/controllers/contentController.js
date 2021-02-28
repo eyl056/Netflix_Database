@@ -83,3 +83,27 @@ exports.popularContent = async function (req, res) {
         });
     }
 };
+
+/*
+08. todayTop5 API = 오늘 한국 TOP5 콘텐츠
+*/
+exports.todayTop5Content = async function (req, res) {
+    try {
+        const [todayTop5ContentRows] = await contentDao.todayTop5ContentInfo()
+
+        return res.json({
+            todayTop5ContentRows,
+            isSuccess: true,
+            code: 200,
+            message: "오늘 한국 TOP5 콘텐츠 조회 성공"
+        });
+    } catch (err) {
+        logger.error(`App - todayTop5Content Query error\n: ${JSON.stringify(err)}`);
+        //connection.release();
+        return res.json({
+            isSuccess: false,
+            code: 200,
+            message: "오늘 한국 TOP5 콘텐츠 조회 실패"
+        });
+    }
+};

@@ -83,3 +83,11 @@
 {"message":"undefined - API Server Start At Port 8080","level":"info","timestamp":"2021-03-01 05:41:47"}
 {"message":"undefined - API Server Start At Port 8080","level":"info","timestamp":"2021-03-01 05:42:17"}
 {"message":"undefined - API Server Start At Port 8080","level":"info","timestamp":"2021-03-01 05:42:46"}
+{"message":"undefined - API Server Start At Port 8080","level":"info","timestamp":"2021-03-01 05:55:43"}
+{"message":"App - todayTop5Content Query error\n: {}","level":"error","timestamp":"2021-03-01 05:56:21"}
+{"message":"undefined - API Server Start At Port 8080","level":"info","timestamp":"2021-03-01 05:58:11"}
+{"message":"App - todayTop5Content Query error\n: {}","level":"error","timestamp":"2021-03-01 05:58:14"}
+{"message":"App - todayTop5Content Query error\n: {}","level":"error","timestamp":"2021-03-01 05:58:14"}
+{"message":"App - todayTop5Content Query error\n: {}","level":"error","timestamp":"2021-03-01 05:58:15"}
+{"message":"App - todayTop5Content Query error\n: {}","level":"error","timestamp":"2021-03-01 05:59:07"}
+{"message":"undefined - API Server Start At Port 8080","level":"info","timestamp":"2021-03-01 05:59:41"}
