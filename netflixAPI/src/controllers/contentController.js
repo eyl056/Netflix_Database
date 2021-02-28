@@ -184,3 +184,28 @@ exports.toBeReleasedContent = async function (req, res) {
         });
     }
 };
+
+/*
+12. maxSearchContent API = 검색화면 - 최다 검색 콘텐츠 TOP5
+*/
+exports.maxSearchContent = async function (req, res) {
+
+    try {
+        const [maxSearchContents] = await contentDao.maxSearchContentInfo()
+
+        return res.json({
+            maxSearchContents,
+            isSuccess: true,
+            code: 200,
+            message: "검색화면 - 최다 검색 콘텐츠 TOP5 조회 성공"
+        });
+    } catch (err) {
+        logger.error(`App - maxSearchContent Query error\n: ${JSON.stringify(err)}`);
+        //connection.release();
+        return res.json({
+            isSuccess: false,
+            code: 200,
+            message: "검색화면 - 최다 검색 콘텐츠 TOP5 조회 실패"
+        });
+    }
+};

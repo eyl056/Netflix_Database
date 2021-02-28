@@ -171,6 +171,24 @@ async function toBeReleasedContentInfo(userIndex) {
     return toBeReleasedContentRows;
 }
 
+// 검색화면 - 최다 검색 콘텐츠 TOP5
+async function maxSearchContentInfo() {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const maxSearchContentQuery =   `
+                                    select contentsPosterURL, contentsImageURL, top5,
+                                            distributeCompany, updateTime,contentsName
+                                    from Contents
+                                    order by searchNum desc limit 5;
+                                        `;
+
+    const maxSearchContentRows = await connection.query(
+        maxSearchContentQuery
+    );
+    connection.release();
+
+    return maxSearchContentRows;
+}
+
 module.exports = {
     favoriteContentInfo,
     mainFavoriteContentInfo,
@@ -179,4 +197,5 @@ module.exports = {
     netflixOriginalLatestContentInfo,
     recommendedContentInfo,
     toBeReleasedContentInfo,
+    maxSearchContentInfo,
 };

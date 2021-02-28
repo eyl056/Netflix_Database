@@ -13,4 +13,6 @@ module.exports = function(app) {
     app.get('/app/content/recommendedContent/:userIndex', content.recommendedContent); // 시청 완료한 콘텐츠와 비슷한 콘텐츠
 
     app.get('/app/content/toBeReleasedContent/:userIndex', content.toBeReleasedContent); // 공개예정 콘텐츠 & 알람 여부
+
+    app.get('/app/content/maxSearchContent', content.maxSearchContent); // 검색화면 - 최다 검색 콘텐츠 TOP5
 }
