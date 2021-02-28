@@ -13,7 +13,7 @@ async function favoriteContentInfo(userID) {
                     User.userID = ? and isLiked = 'Y';
                     `;
     const selectFavoriteContentInfoParams = [userID];
-    const [favoriteContentRows] = await connection.query(
+    const favoriteContentRows = await connection.query(
         selectFavoriteContentInfoQuery,
         selectFavoriteContentInfoParams
     );
@@ -37,7 +37,7 @@ async function mainFavoriteContentInfo(userIndex) {
                                         ORDER BY LikedContents.updatedAt DESC;
                                         `;
     const selectMainFavoriteContentInfoParams = [userIndex];
-    const [mainFavoriteContentRows] = await connection.query(
+    const mainFavoriteContentRows = await connection.query(
         selectMainFavoriteContentInfoQuery,
         selectMainFavoriteContentInfoParams
     );
@@ -46,7 +46,24 @@ async function mainFavoriteContentInfo(userIndex) {
     return mainFavoriteContentRows;
 }
 
+// 메인화면 - 지금 뜨는 콘텐츠
+async function popularContentInfo() {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const selectPopularContentQuery =   `
+                                    SELECT contentsPosterURL, updateTime, top5, distributeCompany
+                                    FROM Contents
+                                    ORDER BY searchNum desc limit 5;
+                                        `;
+    const popularContentRows = await connection.query(
+        selectPopularContentQuery
+    );
+    connection.release();
+
+    return popularContentRows;
+}
+
 module.exports = {
     favoriteContentInfo,
     mainFavoriteContentInfo,
+    popularContentInfo,
 };

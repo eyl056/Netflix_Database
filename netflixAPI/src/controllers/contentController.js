@@ -59,3 +59,27 @@ exports.mainFavoriteContent = async function (req, res) {
         });
     }
 };
+
+/*
+07. popularContent API = 메인 화면 - 지금 뜨는 콘텐츠 ( 검색수 TOP 5)
+*/
+exports.popularContent = async function (req, res) {
+    try {
+        const [popularContentRows] = await contentDao.popularContentInfo()
+
+        return res.json({
+            popularContentRows,
+            isSuccess: true,
+            code: 200,
+            message: "메인 - 지금 뜨는 콘텐츠 조회 성공"
+        });
+    } catch (err) {
+        logger.error(`App - popularContentInfo Query error\n: ${JSON.stringify(err)}`);
+        //connection.release();
+        return res.json({
+            isSuccess: false,
+            code: 200,
+            message: "메인 - 지금 뜨는 콘텐츠 조회 실패"
+        });
+    }
+};
