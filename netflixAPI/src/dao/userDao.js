@@ -1,5 +1,9 @@
 const { pool } = require("C:/Users/eunyoung/Documents/GitHub/Netflix_Server/netflixAPI/config/database");
 
+/*
+01.signUp API = 회원가입
+*/
+// 아이디 중복 확인
 async function userIDCheck(userID) {
     const connection = await pool.getConnection(async (conn) => conn);
     const selectUserIDQuery =   `
@@ -17,6 +21,7 @@ async function userIDCheck(userID) {
     return userIDRows;
 }
 
+// 이메일 중복 확인
 async function userEmailCheck(userEmail) {
     const connection = await pool.getConnection(async (conn) => conn);
     const selectUserEmailQuery =   `
@@ -34,6 +39,7 @@ async function userEmailCheck(userEmail) {
     return userEmailRows;
 }
 
+// 회원 생성(회원가입 완료)
 async function insertUserInfo(insertUserInfoParams) {
     const connection = await pool.getConnection(async (conn) => conn);
     const insertUserInfoQuery = `

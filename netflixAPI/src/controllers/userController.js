@@ -99,3 +99,7 @@ exports.signUp = async function (req, res) {
         return res.status(500).send(`Error: ${err.message}`)
     }
 };
+
+/*
+02.signIn API = 로그인
+*/
