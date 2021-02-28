@@ -1,0 +1,61 @@
+//const { pool } = require("../../../config/database");
+
+const regexEmail = require('regex-email');
+
+const contentDao = require('../dao/contentDao');
+const { constants } = require('buffer');
+//const Connection = require('mysql2/typings/mysql/lib/Connection');
+const { logger } = require('../../config/winston');
+
+
+/*
+05.favoriteContent API = 내가 찜한 콘텐츠 화면
+*/
+exports.favoriteContent = async function (req, res) {
+    const userID = req.params.userId;
+
+    try {
+        const [favoriteContentRows] = await contentDao.favoriteContentInfo(userID)
+
+        return res.json({
+            contentsInfo: favoriteContentRows,
+            isSuccess: true,
+            code: 200,
+            message: "내가 찜한 콘텐츠 조회 성공"
+        });
+    } catch (err) {
+        logger.error(`App - favoriteContentInfo Query error\n: ${JSON.stringify(err)}`);
+        //connection.release();
+        return res.json({
+            isSuccess: false,
+            code: 200,
+            message: "내가 찜한 콘텐츠 조회 실패"
+        });
+    }
+};
+
+/*
+06. mainFavoriteContent API = 메인 화면 - 내가 찜한 콘텐츠
+*/
+exports.mainFavoriteContent = async function (req, res) {
+    const userIndex = req.params.userIndex;
+
+    try {
+        const [mainFavoriteContentRows] = await contentDao.mainFavoriteContentInfo(userIndex)
+
+        return res.json({
+            contentsInfo: mainFavoriteContentRows,
+            isSuccess: true,
+            code: 200,
+            message: "메인 - 내가 찜한 콘텐츠 조회 성공"
+        });
+    } catch (err) {
+        logger.error(`App - mainFavoriteContentInfo Query error\n: ${JSON.stringify(err)}`);
+        //connection.release();
+        return res.json({
+            isSuccess: false,
+            code: 200,
+            message: "메인 - 내가 찜한 콘텐츠 조회 실패"
+        });
+    }
+};
