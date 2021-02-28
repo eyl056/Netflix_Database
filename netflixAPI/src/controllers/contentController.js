@@ -160,7 +160,7 @@ exports.recommendedContent = async function (req, res) {
 
 
 /*
-11. Content API = 공개예정 콘텐츠 & 알람 여부
+11. toBeReleasedContent API = 공개예정 콘텐츠 & 알람 여부
 */
 exports.toBeReleasedContent = async function (req, res) {
     const userIndex = req.params.userIndex;
@@ -206,6 +206,36 @@ exports.maxSearchContent = async function (req, res) {
             isSuccess: false,
             code: 200,
             message: "검색화면 - 최다 검색 콘텐츠 TOP5 조회 실패"
+        });
+    }
+};
+
+/*
+13. savedContent API = 저장한 콘텐츠 목록
+*/
+exports.savedContent = async function (req, res) {
+    const userIndex1 = req.params.userIndex;
+    const userIndex2 = req.params.userIndex;
+    const userIndex3 = req.params.userIndex;
+
+    const savedContentParams = [userIndex1, userIndex2, userIndex3]
+
+    try {
+        const [savedContents] = await contentDao.savedContentInfo(savedContentParams)
+
+        return res.json({
+            savedContents,
+            isSuccess: true,
+            code: 200,
+            message: "저장한 콘텐츠 목록 조회 성공"
+        });
+    } catch (err) {
+        logger.error(`App - savedContent Query error\n: ${JSON.stringify(err)}`);
+        //connection.release();
+        return res.json({
+            isSuccess: false,
+            code: 200,
+            message: "저장한 콘텐츠 목록 조회 실패"
         });
     }
 };

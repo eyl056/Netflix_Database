@@ -15,4 +15,6 @@ module.exports = function(app) {
     app.get('/app/content/toBeReleasedContent/:userIndex', content.toBeReleasedContent); // 공개예정 콘텐츠 & 알람 여부
 
     app.get('/app/content/maxSearchContent', content.maxSearchContent); // 검색화면 - 최다 검색 콘텐츠 TOP5
+
+    app.get('/app/content/savedContent/:userIndex', content.savedContent); // 저장한 콘텐츠 목록
 }

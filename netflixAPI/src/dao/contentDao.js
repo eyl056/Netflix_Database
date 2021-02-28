@@ -189,6 +189,56 @@ async function maxSearchContentInfo() {
     return maxSearchContentRows;
 }
 
+// 저장한 콘텐츠 목록
+async function savedContentInfo(savedContentParams) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const savedContentQuery =   `
+                    select distinct contentsPosterURL,
+                            distributeCompany,
+                            contentsName, rating, count,
+                            userProfileImageURL, userName, smartSave,
+                                    totalCapacity,
+                            IF(EXISTS(select * where isSaved = 'M'),'M', 'Y' ) ingSave
+                    from Contents
+                        inner join (
+                            select distinct contentsIndex, count, isSaved,
+                                            userProfileImageURL, userName, smartSave
+                            from SaveVideo
+                                inner join(
+                                    select COUNT(*) as count
+                                    from SaveVideo
+                                    where userIndex = ? and isSaved in ('M', 'Y')
+                                    group by contentsIndex
+                                ) CountVideo
+                                inner join (
+                                    select userProfileImageURL, userName, smartSave
+                                    from User
+                                    where userIndex = ?
+                                ) SmartSaveUser
+                            where userIndex = ? and isSaved in ('M', 'Y')
+                        ) Saving
+                        inner join (
+                            select SUM(capacity) as totalCapacity
+                            from Video
+                                inner join (
+                                    select videoIndex
+                                    from SaveVideo
+                                    where isSaved = 'Y'
+                                ) Capacity
+                            where Capacity.videoIndex = Video.videoIndex
+                        ) Capacity2
+                    where Saving.contentsIndex = Contents.contentsIndex;
+                                        `;
+                             
+    const savedContentRows = await connection.query(
+        savedContentQuery,
+        savedContentParams
+    );
+    connection.release();
+
+    return savedContentRows;
+}
+
 module.exports = {
     favoriteContentInfo,
     mainFavoriteContentInfo,
@@ -198,4 +248,5 @@ module.exports = {
     recommendedContentInfo,
     toBeReleasedContentInfo,
     maxSearchContentInfo,
+    savedContentInfo,
 };
