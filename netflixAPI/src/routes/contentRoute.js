@@ -7,4 +7,6 @@ module.exports = function(app) {
     app.get('/app/content/popularContent', content.popularContent); // 메인화면 - 지금 뜨는 콘텐츠
 
     app.get('/app/content/todayTop5Content', content.todayTop5Content); // 오늘 한국 TOP5 콘텐츠
+
+    app.get('/app/content/netflixOriginalLatestContent', content.netflixOriginalLatestContent); // 넷플릭스 오리지널 중 최신 콘텐츠
 }

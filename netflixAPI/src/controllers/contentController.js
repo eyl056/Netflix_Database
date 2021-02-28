@@ -107,3 +107,27 @@ exports.todayTop5Content = async function (req, res) {
         });
     }
 };
+
+/*
+09. netflixOriginalLatestContent API = 넷플릭스 오리지널 중 최신 콘텐츠
+*/
+exports.netflixOriginalLatestContent = async function (req, res) {
+    try {
+        const [netflixOriginalLatestContentRows] = await contentDao.netflixOriginalLatestContentInfo()
+
+        return res.json({
+            netflixOriginalLatestContentRows,
+            isSuccess: true,
+            code: 200,
+            message: "넷플릭스 오리지널 중 최신 콘텐츠 조회 성공"
+        });
+    } catch (err) {
+        logger.error(`App - netflixOriginalLatestContent Query error\n: ${JSON.stringify(err)}`);
+        //connection.release();
+        return res.json({
+            isSuccess: false,
+            code: 200,
+            message: "넷플릭스 오리지널 중 최신 콘텐츠 조회 실패"
+        });
+    }
+};

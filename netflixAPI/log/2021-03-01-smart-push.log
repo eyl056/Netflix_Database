@@ -91,3 +91,5 @@
 {"message":"App - todayTop5Content Query error\n: {}","level":"error","timestamp":"2021-03-01 05:58:15"}
 {"message":"App - todayTop5Content Query error\n: {}","level":"error","timestamp":"2021-03-01 05:59:07"}
 {"message":"undefined - API Server Start At Port 8080","level":"info","timestamp":"2021-03-01 05:59:41"}
+{"message":"undefined - API Server Start At Port 8080","level":"info","timestamp":"2021-03-01 06:08:55"}
+{"message":"undefined - API Server Start At Port 8080","level":"info","timestamp":"2021-03-01 06:09:52"}

@@ -79,9 +79,27 @@ async function todayTop5ContentInfo() {
     return todayTop5ContentRows;
 }
 
+// 넷플릭스 오리지널 중 최신 콘텐츠
+async function netflixOriginalLatestContentInfo() {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const selectNetflixOriginalLatestContentQuery =   `
+                                    select contentsPosterURL
+                                    from Contents
+                                    where distributeCompany = 'netflix'
+                                    order by updatedAt desc;
+                                        `;
+    const netflixOriginalLatestContentRows = await connection.query(
+        selectNetflixOriginalLatestContentQuery
+    );
+    connection.release();
+
+    return netflixOriginalLatestContentRows;
+}
+
 module.exports = {
     favoriteContentInfo,
     mainFavoriteContentInfo,
     popularContentInfo,
     todayTop5ContentInfo,
+    netflixOriginalLatestContentInfo,
 };
