@@ -136,8 +136,10 @@ exports.netflixOriginalLatestContent = async function (req, res) {
 10. recommendedContent API = 시청 완료한 콘텐츠와 비슷한 콘텐츠
 */
 exports.recommendedContent = async function (req, res) {
+    const userIndex = req.params.userIndex;
+
     try {
-        const [recommendedContents] = await contentDao.recommendedContentInfo()
+        const [recommendedContents] = await contentDao.recommendedContentInfo(userIndex)
 
         return res.json({
             recommendedContents,
@@ -152,6 +154,33 @@ exports.recommendedContent = async function (req, res) {
             isSuccess: false,
             code: 200,
             message: "시청 완료한 콘텐츠와 비슷한 콘텐츠 조회 실패"
+        });
+    }
+};
+
+
+/*
+11. Content API = 공개예정 콘텐츠 & 알람 여부
+*/
+exports.toBeReleasedContent = async function (req, res) {
+    const userIndex = req.params.userIndex;
+
+    try {
+        const [toBeReleasedContents] = await contentDao.toBeReleasedContentInfo(userIndex)
+
+        return res.json({
+            toBeReleasedContents,
+            isSuccess: true,
+            code: 200,
+            message: "공개예정 콘텐츠 & 알람 여부 조회 성공"
+        });
+    } catch (err) {
+        logger.error(`App - toBeReleasedContent Query error\n: ${JSON.stringify(err)}`);
+        //connection.release();
+        return res.json({
+            isSuccess: false,
+            code: 200,
+            message: "공개예정 콘텐츠 & 알람 여부 조회 실패"
         });
     }
 };
