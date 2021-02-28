@@ -96,10 +96,52 @@ async function netflixOriginalLatestContentInfo() {
     return netflixOriginalLatestContentRows;
 }
 
+// 시청 완료한 콘텐츠와 비슷한 콘텐츠
+async function recommendedContentInfo() {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const selectRecommendedContentQuery =   `
+                            select distinct contentsPosterURL, top5, distributeCompany, updateTime,
+                            genreRandom.watchedContentsName
+                        from Contents
+                        inner join (
+                            select
+                                substring_index(substring_index(selectedGenre.genre, ',', 1),',',-1) genre1,
+                                substring_index(substring_index(selectedGenre.genre, ',', 2),',',-1) genre2,
+                                substring_index(substring_index(selectedGenre.genre, ',', 3),',',-1) genre3,
+                                substring_index(substring_index(selectedGenre.genre, ',', 4),',',-1) genre4,
+                                selectedGenre.contentsName as watchedContentsName
+                            from(
+                                select genre, contentsName
+                                from Contents
+                                    inner join (
+                                        select contentsIndex
+                                        from Video
+                                            inner join (
+                                                select videoIndex
+                                                from WatchVideo
+                                                where userIndex = 1 AND isWatched = 'Y' order by rand() limit 1
+                                            ) RandomVideo on RandomVideo.videoIndex = Video.videoIndex
+                                    ) RandomContent on RandomContent.contentsIndex = Contents.contentsIndex) selectedGenre
+                        ) genreRandom
+                        inner join LikeContents as LC
+                        where find_in_set(genreRandom.genre1,Contents.genre) or
+                        find_in_set(genreRandom.genre2,Contents.genre) or
+                        find_in_set(genreRandom.genre3,Contents.genre)
+                        order by rand() limit 10;
+                                        `;
+    const recommendedContentRows = await connection.query(
+        selectRecommendedContentQuery
+    );
+    connection.release();
+
+    return recommendedContentRows;
+}
+
 module.exports = {
     favoriteContentInfo,
     mainFavoriteContentInfo,
     popularContentInfo,
     todayTop5ContentInfo,
     netflixOriginalLatestContentInfo,
+    recommendedContentInfo,
 };

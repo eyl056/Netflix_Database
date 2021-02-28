@@ -131,3 +131,27 @@ exports.netflixOriginalLatestContent = async function (req, res) {
         });
     }
 };
+
+/*
+10. recommendedContent API = 시청 완료한 콘텐츠와 비슷한 콘텐츠
+*/
+exports.recommendedContent = async function (req, res) {
+    try {
+        const [recommendedContents] = await contentDao.recommendedContentInfo()
+
+        return res.json({
+            recommendedContents,
+            isSuccess: true,
+            code: 200,
+            message: "시청 완료한 콘텐츠와 비슷한 콘텐츠 조회 성공"
+        });
+    } catch (err) {
+        logger.error(`App - recommendedContent Query error\n: ${JSON.stringify(err)}`);
+        //connection.release();
+        return res.json({
+            isSuccess: false,
+            code: 200,
+            message: "시청 완료한 콘텐츠와 비슷한 콘텐츠 조회 실패"
+        });
+    }
+};
