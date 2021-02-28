@@ -1,8 +1,5 @@
 const { pool } = require("C:/Users/eunyoung/Documents/GitHub/Netflix_Server/netflixAPI/config/database");
 
-/*
-01.signUp API = 회원가입
-*/
 // 아이디 중복 확인
 async function userIDCheck(userID) {
     const connection = await pool.getConnection(async (conn) => conn);
@@ -54,9 +51,6 @@ async function insertUserInfo(insertUserInfoParams) {
     return insertUserInfoRow;
 }
 
-/*
-02.signIn API = 로그인
-*/
 // 로그인 아이디, 비밀번호 확인
 async function selectUserInfo(userID, password) {
     const connection = await pool.getConnection(async (conn) => conn);
@@ -108,6 +102,37 @@ async function selectPasswordInfo(password) {
     return [passwordInfoRows];
 }
 
+// 사용자 프로필사진, 닉네임 가져오기
+async function selectUserProfileInfo(userID) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const selectUserProfileInfoQuery = `
+                            SELECT userName, userProfileImageURL
+                            FROM User
+                            WHERE userID = ?;
+                        `;
+
+    let selectUserProfileInfoParams = [userID];
+    const [userProfileInfoRows] = await connection.query(
+        selectUserProfileInfoQuery,
+        selectUserProfileInfoParams
+    )
+    return [userProfileInfoRows];
+}
+
+// 사용자 프로필사진, 닉네임 가져오기
+async function selectAllUserInfo() {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const selectUserInfoQuery = `
+                            SELECT *
+                            FROM User;
+                        `;
+
+    const [userInfoRows] = await connection.query(
+        selectUserInfoQuery
+    )
+    return [userInfoRows];
+}
+
 module.exports = {
     userIDCheck,
     userEmailCheck,
@@ -115,4 +140,6 @@ module.exports = {
     selectUserInfo,
     selectUserIDInfo,
     selectPasswordInfo,
+    selectUserProfileInfo,
+    selectAllUserInfo,
 };

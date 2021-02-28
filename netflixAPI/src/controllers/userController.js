@@ -182,3 +182,53 @@ exports.signIn = async function (req, res) {
         return false;
     }
 };
+
+/*
+03. userProfile API = 유저 프로필 정보
+*/
+exports.userProfileInfo = async function (req, res) {
+    const userID = req.params.userId
+    logger.info(`${req.params.userId}`);
+    try {
+        const [userProfileInfoRows] = await userDao.selectUserProfileInfo(userID)
+
+        return res.json({
+            userInfo: userProfileInfoRows[0],
+            isSuccess: true,
+            code: 200,
+            message: "유저 프로필 정보 조회 성공"
+        });
+    } catch (err) {
+        logger.error(`App - userProfileInfo Query error\n: ${JSON.stringify(err)}`);
+        //connection.release();
+        return res.json({
+            isSuccess: false,
+            code: 200,
+            message: "유저 프로필 정보 조회 실패"
+        });
+    }
+};
+
+/*
+04. userInfo API = 전체 회원 정보
+*/
+exports.allUserInfo = async function (req, res) {
+    try {
+        const [userInfoRows] = await userDao.selectAllUserInfo()
+
+        return res.json({
+            allUserInfo: userInfoRows,
+            isSuccess: true,
+            code: 200,
+            message: "전체 회원 조회 성공"
+        });
+    } catch (err) {
+        logger.error(`App - allUserInfo Query error\n: ${JSON.stringify(err)}`);
+        //connection.release();
+        return res.json({
+            isSuccess: false,
+            code: 200,
+            message: "전체 회원 조회 실패"
+        });
+    }
+};
