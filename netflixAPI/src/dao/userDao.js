@@ -119,7 +119,24 @@ async function selectUserProfileInfo(userID) {
     return [userProfileInfoRows];
 }
 
-// 사용자 프로필사진, 닉네임 가져오기
+// 특정 사용자 정보 가져오기
+async function userInfo(userID) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const userInfoQuery = `
+                            SELECT *
+                            FROM User
+                            WHERE userID = ?;
+                        `;
+
+    let userInfoParams = [userID];
+    const [userInfoRows] = await connection.query(
+        userInfoQuery,
+        userInfoParams
+    )
+    return [userInfoRows];
+}
+
+// 모든 사용자 정보 가져오기
 async function selectAllUserInfo() {
     const connection = await pool.getConnection(async (conn) => conn);
     const selectUserInfoQuery = `
@@ -142,4 +159,5 @@ module.exports = {
     selectPasswordInfo,
     selectUserProfileInfo,
     selectAllUserInfo,
+    userInfo,
 };

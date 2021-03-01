@@ -210,6 +210,32 @@ exports.userProfileInfo = async function (req, res) {
 };
 
 /*
+19. userInfo API = 특정 유저 정보
+*/
+exports.userInfo = async function (req, res) {
+    const userID = req.params.userId;
+    
+    try {
+        const [userInfoRows] = await userDao.userInfo(userID)
+
+        return res.json({
+            userInfo: userInfoRows[0],
+            isSuccess: true,
+            code: 200,
+            message: "특정 유저 정보 조회 성공"
+        });
+    } catch (err) {
+        logger.error(`App - userInfo Query error\n: ${JSON.stringify(err)}`);
+        //connection.release();
+        return res.json({
+            isSuccess: false,
+            code: 200,
+            message: "특정 유저 정보 조회 실패"
+        });
+    }
+};
+
+/*
 04. userInfo API = 전체 회원 정보
 */
 exports.allUserInfo = async function (req, res) {
