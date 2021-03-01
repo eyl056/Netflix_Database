@@ -6,6 +6,9 @@ const userDao = require('../dao/userDao');
 const { constants } = require('buffer');
 //const Connection = require('mysql2/typings/mysql/lib/Connection');
 const { logger } = require('../../config/winston');
+const crypto = require('crypto')
+//const Connection = require('mysql2/typings/mysql/lib/Connection');
+const { pool } = require('../../config/database');
 
 /*
 01.signUp API = 회원가입
@@ -64,6 +67,8 @@ exports.signUp = async function (req, res) {
     });
 
     try {
+        const connection = await pool.getConnection(async (conn) => conn)
+
         // 아이디 중복 확인
         const userIDRows = await userDao.userIDCheck(userID);
         if(userIDRows.length > 0) {
@@ -84,7 +89,10 @@ exports.signUp = async function (req, res) {
             });
         }
 
-        const insertUserInfoParams = [userID, userEmail, password, userName];
+        await connection.beginTransaction()
+        const hashedPassword = await crypto.createHash('sha512').update(password).digest('hex')
+
+        const insertUserInfoParams = [userID, userEmail, hashedPassword, userName];
         const insertUserRows = await userDao.insertUserInfo(insertUserInfoParams);
 
         // await connection.commit(); // COMMIT
