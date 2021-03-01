@@ -22,6 +22,7 @@ module.exports = function () {
     //require('../src/routes/testRoute')(app);
     require('../src/routes/userRoute')(app);
     require('../src/routes/contentRoute')(app);
+    require('../src/routes/performerRoute')(app);
 
     /* Web */
     // require('../src/web/routes/indexRoute')(app);
