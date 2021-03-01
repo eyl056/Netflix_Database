@@ -7,8 +7,9 @@ const { constants } = require('buffer');
 //const Connection = require('mysql2/typings/mysql/lib/Connection');
 const { logger } = require('../../config/winston');
 const crypto = require('crypto')
-//const Connection = require('mysql2/typings/mysql/lib/Connection');
 const { pool } = require('../../config/database');
+const secret_config = require('C:/Users/eunyoung/Documents/GitHub/Netflix_Server/netflixAPI/config/secret');
+const jwt = require('jsonwebtoken')
 
 /*
 01.signUp API = 회원가입
@@ -143,6 +144,8 @@ exports.signIn = async function (req, res) {
     });
 
     try {
+        const connection = await pool.getConnection(async (conn) => conn)
+
         const [userIDInfoRows] = await userDao.selectUserIDInfo(userID)
 
         if (userIDInfoRows[0] == null) {
@@ -154,7 +157,8 @@ exports.signIn = async function (req, res) {
             });
         }
 
-        const [passwordInfoRows] = await userDao.selectPasswordInfo(password)
+        const hashedPassword = await crypto.createHash('sha512').update(password).digest('hex')
+        const [passwordInfoRows] = await userDao.selectPasswordInfo(hashedPassword)
 
         if (passwordInfoRows[0] == null) {
             //connection.release();
@@ -165,7 +169,7 @@ exports.signIn = async function (req, res) {
             });
         }
 
-        const [userInfoRows] = await userDao.selectUserInfo(userID, password)
+        const [userInfoRows] = await userDao.selectUserInfo(userID, hashedPassword)
 
         if (userInfoRows[0] == null) {
             //connection.release();
@@ -176,8 +180,20 @@ exports.signIn = async function (req, res) {
             });
         }
         else {
+            // 토큰 생성
+            let token = await jwt.sign({
+                    userID: userInfoRows[0].userID
+                }, // 토큰의 내용(payload)
+                secret_config.jwtsecret, // 비밀 키
+                {
+                    expiresIn: '365d',
+                    subject: 'userInfo',
+                } // 유효 시간은 365일
+            )
+
             return res.json({
                 userInfo: userInfoRows[0],
+                jwt: token,
                 isSuccess: true,
                 code: 200,
                 message: "로그인 성공"
@@ -191,10 +207,23 @@ exports.signIn = async function (req, res) {
     }
 };
 
+/**
+ 20.check API = token 검증
+ **/
+exports.check = async function (req, res) {
+    res.json({
+        isSuccess: true,
+        code: 200,
+        message: "검증 성공",
+        info: req.verifiedToken
+    })
+};
+
 /*
 03. userProfile API = 유저 프로필 정보
 */
 exports.userProfileInfo = async function (req, res) {
+    
     const userID = req.params.userId;
     
     try {
@@ -221,7 +250,11 @@ exports.userProfileInfo = async function (req, res) {
 19. userInfo API = 특정 유저 정보
 */
 exports.userInfo = async function (req, res) {
-    const userID = req.params.userId;
+    const token = req.verifiedToken
+
+    //const userID = req.params.userId;
+    
+    const userID = token.userID
     
     try {
         const [userInfoRows] = await userDao.userInfo(userID)

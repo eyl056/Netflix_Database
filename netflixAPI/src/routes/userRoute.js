@@ -12,5 +12,7 @@ module.exports = function(app) {
 
     app.get('/app/userInfo', user.allUserInfo); // 전체 회원
 
+    app.get('/check', jwtMiddleware, user.check);
+
     //app.get('/app/signUp', user.signUp);
 }
