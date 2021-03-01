@@ -6,16 +6,23 @@ const contentDao = require('../dao/contentDao');
 const { constants } = require('buffer');
 //const Connection = require('mysql2/typings/mysql/lib/Connection');
 const { logger } = require('../../config/winston');
+const crypto = require('crypto')
+const secret_config = require('C:/Users/eunyoung/Documents/GitHub/Netflix_Server/netflixAPI/config/secret');
+const jwt = require('jsonwebtoken')
 
 
 /*
 05.favoriteContent API = 내가 찜한 콘텐츠 화면
 */
 exports.favoriteContent = async function (req, res) {
-    const userID = req.params.userId;
+    
+    const token = req.verifiedToken
+    const userId = token.userID
+
+    //const userID = req.params.userId;
 
     try {
-        const [favoriteContentRows] = await contentDao.favoriteContentInfo(userID)
+        const [favoriteContentRows] = await contentDao.favoriteContentInfo(userId)
 
         return res.json({
             contentsInfo: favoriteContentRows,
@@ -38,7 +45,11 @@ exports.favoriteContent = async function (req, res) {
 06. mainFavoriteContent API = 메인 화면 - 내가 찜한 콘텐츠
 */
 exports.mainFavoriteContent = async function (req, res) {
-    const userIndex = req.params.userIndex;
+
+    const token = req.verifiedToken
+    const userIndex = token.userIndex
+
+    //const userIndex = req.params.userIndex;
 
     try {
         const [mainFavoriteContentRows] = await contentDao.mainFavoriteContentInfo(userIndex)
@@ -136,7 +147,11 @@ exports.netflixOriginalLatestContent = async function (req, res) {
 10. recommendedContent API = 시청 완료한 콘텐츠와 비슷한 콘텐츠
 */
 exports.recommendedContent = async function (req, res) {
-    const userIndex = req.params.userIndex;
+
+    const token = req.verifiedToken
+    const userIndex = token.userIndex
+
+    //const userIndex = req.params.userIndex;
 
     try {
         const [recommendedContents] = await contentDao.recommendedContentInfo(userIndex)
@@ -163,7 +178,11 @@ exports.recommendedContent = async function (req, res) {
 11. toBeReleasedContent API = 공개예정 콘텐츠 & 알람 여부
 */
 exports.toBeReleasedContent = async function (req, res) {
-    const userIndex = req.params.userIndex;
+
+    const token = req.verifiedToken
+    const userIndex = token.userIndex
+
+    //const userIndex = req.params.userIndex;
 
     try {
         const [toBeReleasedContents] = await contentDao.toBeReleasedContentInfo(userIndex)
@@ -214,9 +233,14 @@ exports.maxSearchContent = async function (req, res) {
 13. savedContent API = 저장한 콘텐츠 목록
 */
 exports.savedContent = async function (req, res) {
-    const userIndex1 = req.params.userIndex;
-    const userIndex2 = req.params.userIndex;
-    const userIndex3 = req.params.userIndex;
+    const token = req.verifiedToken
+    const userIndex1 = token.userIndex
+    const userIndex2 = token.userIndex
+    const userIndex3 = token.userIndex
+
+    // const userIndex1 = req.params.userIndex;
+    // const userIndex2 = req.params.userIndex;
+    // const userIndex3 = req.params.userIndex;
 
     const savedContentParams = [userIndex1, userIndex2, userIndex3]
 
@@ -244,8 +268,13 @@ exports.savedContent = async function (req, res) {
 14. savedContentDetail API = 저장한 콘텐츠 중 하나 자세히
 */
 exports.savedContentDetail = async function (req, res) {
-    const userIndex1 = req.params.userIndex;
-    const userIndex2 = req.params.userIndex;
+
+    const token = req.verifiedToken
+    const userIndex1 = token.userIndex
+    const userIndex2 = token.userIndex
+
+    // const userIndex1 = req.params.userIndex;
+    // const userIndex2 = req.params.userIndex;
 
     const savedContentParams = [userIndex1, userIndex2]
 
@@ -256,7 +285,7 @@ exports.savedContentDetail = async function (req, res) {
             savedContents,
             isSuccess: true,
             code: 200,
-            message: "저장한 콘텐츠 목록 조회 성공"
+            message: "저장한 콘텐츠 조회 성공"
         });
     } catch (err) {
         logger.error(`App - savedContent Query error\n: ${JSON.stringify(err)}`);
@@ -264,7 +293,7 @@ exports.savedContentDetail = async function (req, res) {
         return res.json({
             isSuccess: false,
             code: 400,
-            message: "저장한 콘텐츠 목록 조회 실패"
+            message: "저장한 콘텐츠 조회 실패"
         });
     }
 };
@@ -279,7 +308,11 @@ exports.contentDetail = async function (req, res) {
     const contentsIndex4 = req.params.contentsIndex;
     const contentsIndex5 = req.params.contentsIndex;
     const contentsIndex6 = req.params.contentsIndex;
-    const userIndex = req.params.userIndex;
+
+    const token = req.verifiedToken
+    const userIndex = token.userIndex
+
+    //const userIndex = req.params.userIndex;
 
     const contentDetailParams = [contentsIndex1, contentsIndex2, contentsIndex3, contentsIndex4, contentsIndex5, contentsIndex6, userIndex]
 
@@ -312,9 +345,15 @@ exports.contentDetailVideo = async function (req, res) {
     const contentsIndex3 = req.params.contentsIndex;
     const contentsIndex4 = req.params.contentsIndex;
     const contentsIndex5 = req.params.contentsIndex;
-    const userIndex1 = req.params.userIndex;
-    const userIndex2 = req.params.userIndex;
-    const userIndex3 = req.params.userIndex;
+
+    const token = req.verifiedToken
+    const userIndex1 = token.userIndex
+    const userIndex2 = token.userIndex
+    const userIndex3 = token.userIndex
+
+    // const userIndex1 = req.params.userIndex;
+    // const userIndex2 = req.params.userIndex;
+    // const userIndex3 = req.params.userIndex;
 
     const contentDetailVideoParams = [userIndex1, contentsIndex1, contentsIndex2, contentsIndex3, contentsIndex4, contentsIndex5, userIndex2, userIndex3]
 
