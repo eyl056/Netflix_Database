@@ -55,7 +55,7 @@ async function insertUserInfo(insertUserInfoParams) {
 async function selectUserInfo(userID, password) {
     const connection = await pool.getConnection(async (conn) => conn);
     const selectUserInfoQuery = `
-                        SELECT userID, userName, userProfileImageURL, userEmail, password
+                        SELECT userIndex, userID, userName, userProfileImageURL, userEmail, password
                         FROM User
                         WHERE userID = ? AND password = ?;
                         `;

@@ -182,7 +182,8 @@ exports.signIn = async function (req, res) {
         else {
             // 토큰 생성
             let token = await jwt.sign({
-                    userID: userInfoRows[0].userID
+                    userID: userInfoRows[0].userID,
+                    userIndex: userInfoRows[0].userIndex
                 }, // 토큰의 내용(payload)
                 secret_config.jwtsecret, // 비밀 키
                 {
