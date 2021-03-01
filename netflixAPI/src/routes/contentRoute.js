@@ -23,4 +23,6 @@ module.exports = function(app) {
     app.get('/app/content/contentDetail/:contentsIndex/:userIndex', content.contentDetail); // 콘텐츠 상세 화면 정보
 
     app.get('/app/content/contentDetailVideo/:contentsIndex/:userIndex', content.contentDetailVideo); // 콘텐츠 상세 화면 비디오 & 나의 기록
+
+    app.get('/app/content/contentMore/:contentsIndex', content.contentMore); // 콘텐츠 더보기
 }

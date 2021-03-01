@@ -337,3 +337,33 @@ exports.contentDetailVideo = async function (req, res) {
         });
     }
 };
+
+/*
+17. contentMore API = // 콘텐츠 더보기
+*/
+exports.contentMore = async function (req, res) {
+    const contentsIndex1 = req.params.contentsIndex;
+    const contentsIndex2 = req.params.contentsIndex;
+    const contentsIndex3 = req.params.contentsIndex;
+
+    const contentMoreParams = [contentsIndex1, contentsIndex2, contentsIndex3]
+
+    try {
+        const [contentMoreRows] = await contentDao.contentMoreInfo(contentMoreParams)
+
+        return res.json({
+            contentMoreRows,
+            isSuccess: true,
+            code: 200,
+            message: "콘텐츠 더보기 조회 성공"
+        });
+    } catch (err) {
+        logger.error(`App - contentMore Query error\n: ${JSON.stringify(err)}`);
+        //connection.release();
+        return res.json({
+            isSuccess: false,
+            code: 200,
+            message: "콘텐츠 더보기 조회 실패"
+        });
+    }
+};

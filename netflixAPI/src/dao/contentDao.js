@@ -365,6 +365,31 @@ async function contentDetailVideoInfo(contentDetailVideoParams) {
     return contentDetailVideoRows;
 }
 
+// 콘텐츠 더보기
+async function contentMoreInfo(contentMoreParams) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const contentMoreQuery =   `
+                        select Contents.contentsName,
+                            GROUP_CONCAT(distinct performerName SEPARATOR ', ') as performers,
+                            GROUP_CONCAT(distinct directorName SEPARATOR ', ') as directors,
+                            rating,
+                            genre,
+                            feature
+                        from Contents, Performer, Director
+                        where Performer.contentsIndex = ? and
+                        Contents.contentsIndex = ? and
+                        Director.contentsIndex = ?;
+                                        `;
+                             
+    const contentMoreRows = await connection.query(
+        contentMoreQuery,
+        contentMoreParams
+    );
+    connection.release();
+
+    return contentMoreRows;
+}
+
 module.exports = {
     favoriteContentInfo,
     mainFavoriteContentInfo,
@@ -378,4 +403,5 @@ module.exports = {
     savedContentDetailInfo,
     contentDetailInfo,
     contentDetailVideoInfo,
+    contentMoreInfo,
 };
