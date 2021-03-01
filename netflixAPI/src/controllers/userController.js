@@ -225,10 +225,13 @@ exports.check = async function (req, res) {
 */
 exports.userProfileInfo = async function (req, res) {
     
-    const userID = req.params.userId;
+    const token = req.verifiedToken
+    const userId = token.userID
+
+    //const userID = req.params.userId;
     
     try {
-        const [userProfileInfoRows] = await userDao.selectUserProfileInfo(userID)
+        const [userProfileInfoRows] = await userDao.selectUserProfileInfo(userId)
 
         return res.json({
             userInfo: userProfileInfoRows,
@@ -252,10 +255,13 @@ exports.userProfileInfo = async function (req, res) {
 */
 exports.userInfo = async function (req, res) {
 
-    const userID = req.params.userId;
+    const token = req.verifiedToken
+    const userId = token.userID
+
+    //const userID = req.params.userId;
     
     try {
-        const [userInfoRows] = await userDao.userInfoQuery(userID)
+        const [userInfoRows] = await userDao.userInfoQuery(userId)
 
         return res.json({
             userInfo: userInfoRows[0],
