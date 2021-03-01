@@ -239,6 +239,132 @@ async function savedContentInfo(savedContentParams) {
     return savedContentRows;
 }
 
+// 저장한 콘텐츠 중 하나 자세히
+async function savedContentDetailInfo(savedContentDetailParams) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const savedContentDetailQuery =   `
+                            select distinct videoName, videoLength, capacity, isSaved
+                            from Video
+                                inner join (
+                                    select videoIndex
+                                    from SaveVideo
+                                    where userIndex = ? and isSaved = 'Y'
+                                ) SaveVideoDetail
+                                inner join (
+                                    select isSaved, videoIndex
+                                    from SaveVideo
+                                    where userIndex = ? and isSaved = 'Y' or isSaved = 'M'
+                                ) Saved
+                            where SaveVideoDetail.videoIndex = Video.videoIndex and
+                                Saved.videoIndex = Video.videoIndex;
+                                        `;
+                             
+    const savedContentDetailRows = await connection.query(
+        savedContentDetailQuery,
+        savedContentDetailParams
+    );
+    connection.release();
+
+    return savedContentDetailRows;
+}
+
+// 콘텐츠 상세 화면 정보
+async function contentDetailInfo(contentDetailParams) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const contentDetailQuery =   `
+                        select userProfileImageURL,
+                            preview,
+                            distributeCompany,
+                            contentsName,
+                            ANY_VALUE(year(openingDate)) as openingYear,
+                            ANY_VALUE(concat('시즌 ',seasonNum,'개')) as seasonNum,
+                            highDefinition,
+                            rating,
+                            ANY_VALUE(seasonName) as seasonName,
+                            ANY_VALUE(videoName) as VideoName,
+                            introduction,
+                            ANY_VALUE(watchLength) as watchLength,
+                            ANY_VALUE(videoIntro) as videoIntro,
+                            ANY_VALUE(GROUP_CONCAT(distinct performerName SEPARATOR ', ')) as performers,
+                            ANY_VALUE(directorName) as directorName
+                        from Performer, Director, Contents, User, Video
+                        inner join (
+                            select ANY_VALUE(ContentsSeason.seasonName) as seasonName, ANY_VALUE(count(distinct contentsIndex)) as seasonNum
+                            from ContentsSeason
+                            where ContentsSeason.contentsIndex = ?
+                        ) Season
+                        inner join (
+                            select isWatched, WatchVideo.videoIndex, watchLength
+                            from WatchVideo
+                                inner join (
+                                    select videoIndex
+                                    from Video
+                                    where contentsIndex = ?
+                                ) VideoDetail
+                            where VideoDetail.videoIndex = WatchVideo.videoIndex
+                            order by watchTime desc
+                        ) Watched
+                        where Performer.contentsIndex = ? and
+                        Director.contentsIndex = ? and
+                        Contents.contentsIndex = ? and
+                        Video.contentsIndex = ? and
+                        userIndex = ?;
+                                        `;
+                             
+    const contentDetailRows = await connection.query(
+        contentDetailQuery,
+        contentDetailParams
+    );
+    connection.release();
+
+    return contentDetailRows;
+}
+
+// 콘텐츠 상세 화면 비디오 & 나의 기록
+async function contentDetailVideoInfo(contentDetailVideoParams) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const contentDetailVideoQuery =   `
+                            select distinct seasonName,
+                                            videoURL,
+                                            thumbnailImageURL,
+                                            videoName,
+                                            videoIntro,
+                                            videoLength,
+                                            watchTime,
+                                            isSaved
+                            from Video
+                                inner join (
+                                    select distinct *
+                                    from WatchVideo
+                                    where userIndex = ?
+                                ) WatchVideo
+                                inner join SaveVideo
+                                inner join (
+                                    select distinct seasonName, contentsIndex, videoIndex
+                                    from ContentsSeason
+                                    where contentsIndex = ?
+                                ) ContentsSeason
+                            where Video.contentsIndex = ? and
+                                WatchVideo.contentsIndex = ? and
+                                SaveVideo.contentsIndex = ? and
+                                Video.videoIndex = WatchVideo.videoIndex and
+                                SaveVideo.videoIndex = Video.videoIndex and
+                                WatchVideo.videoIndex = Video.videoIndex and
+                                ContentsSeason.videoIndex = Video.videoIndex and
+                                ContentsSeason.contentsIndex = ? and
+                                SaveVideo.userIndex = ? and
+                                WatchVideo.userIndex = ?;
+                                        `;
+                             
+    const contentDetailVideoRows = await connection.query(
+        contentDetailVideoQuery,
+        contentDetailVideoParams
+    );
+    connection.release();
+
+    return contentDetailVideoRows;
+}
+
 module.exports = {
     favoriteContentInfo,
     mainFavoriteContentInfo,
@@ -249,4 +375,7 @@ module.exports = {
     toBeReleasedContentInfo,
     maxSearchContentInfo,
     savedContentInfo,
+    savedContentDetailInfo,
+    contentDetailInfo,
+    contentDetailVideoInfo,
 };

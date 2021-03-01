@@ -17,4 +17,10 @@ module.exports = function(app) {
     app.get('/app/content/maxSearchContent', content.maxSearchContent); // 검색화면 - 최다 검색 콘텐츠 TOP5
 
     app.get('/app/content/savedContent/:userIndex', content.savedContent); // 저장한 콘텐츠 목록
+
+    app.get('/app/content/savedContent/Detail/:userIndex', content.savedContentDetail); // 저장한 콘텐츠 중 하나 자세히
+
+    app.get('/app/content/contentDetail/:contentsIndex/:userIndex', content.contentDetail); // 콘텐츠 상세 화면 정보
+
+    app.get('/app/content/contentDetailVideo/:contentsIndex/:userIndex', content.contentDetailVideo); // 콘텐츠 상세 화면 비디오 & 나의 기록
 }

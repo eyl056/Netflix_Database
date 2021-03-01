@@ -239,3 +239,101 @@ exports.savedContent = async function (req, res) {
         });
     }
 };
+
+/*
+14. savedContentDetail API = 저장한 콘텐츠 중 하나 자세히
+*/
+exports.savedContentDetail = async function (req, res) {
+    const userIndex1 = req.params.userIndex;
+    const userIndex2 = req.params.userIndex;
+
+    const savedContentParams = [userIndex1, userIndex2]
+
+    try {
+        const [savedContents] = await contentDao.savedContentDetailInfo(savedContentParams)
+
+        return res.json({
+            savedContents,
+            isSuccess: true,
+            code: 200,
+            message: "저장한 콘텐츠 목록 조회 성공"
+        });
+    } catch (err) {
+        logger.error(`App - savedContent Query error\n: ${JSON.stringify(err)}`);
+        //connection.release();
+        return res.json({
+            isSuccess: false,
+            code: 200,
+            message: "저장한 콘텐츠 목록 조회 실패"
+        });
+    }
+};
+
+/*
+15. contentDetail API = 콘텐츠 상세 화면 정보
+*/
+exports.contentDetail = async function (req, res) {
+    const contentsIndex1 = req.params.contentsIndex;
+    const contentsIndex2 = req.params.contentsIndex;
+    const contentsIndex3 = req.params.contentsIndex;
+    const contentsIndex4 = req.params.contentsIndex;
+    const contentsIndex5 = req.params.contentsIndex;
+    const contentsIndex6 = req.params.contentsIndex;
+    const userIndex = req.params.userIndex;
+
+    const contentDetailParams = [contentsIndex1, contentsIndex2, contentsIndex3, contentsIndex4, contentsIndex5, contentsIndex6, userIndex]
+
+    try {
+        const [contentDetail] = await contentDao.contentDetailInfo(contentDetailParams)
+
+        return res.json({
+            contentDetail,
+            isSuccess: true,
+            code: 200,
+            message: "콘텐츠 상세 화면 정보 조회 성공"
+        });
+    } catch (err) {
+        logger.error(`App - contentDetail Query error\n: ${JSON.stringify(err)}`);
+        //connection.release();
+        return res.json({
+            isSuccess: false,
+            code: 200,
+            message: "콘텐츠 상세 화면 정보 조회 실패"
+        });
+    }
+};
+
+/*
+16. contentDetailVideo API = // 콘텐츠 상세 화면 비디오 & 나의 기록
+*/
+exports.contentDetailVideo = async function (req, res) {
+    const contentsIndex1 = req.params.contentsIndex;
+    const contentsIndex2 = req.params.contentsIndex;
+    const contentsIndex3 = req.params.contentsIndex;
+    const contentsIndex4 = req.params.contentsIndex;
+    const contentsIndex5 = req.params.contentsIndex;
+    const userIndex1 = req.params.userIndex;
+    const userIndex2 = req.params.userIndex;
+    const userIndex3 = req.params.userIndex;
+
+    const contentDetailVideoParams = [userIndex1, contentsIndex1, contentsIndex2, contentsIndex3, contentsIndex4, contentsIndex5, userIndex2, userIndex3]
+
+    try {
+        const [contentDetailVideo] = await contentDao.contentDetailVideoInfo(contentDetailVideoParams)
+
+        return res.json({
+            contentDetailVideo,
+            isSuccess: true,
+            code: 200,
+            message: "콘텐츠 상세 화면 비디오 & 나의 기록 조회 성공"
+        });
+    } catch (err) {
+        logger.error(`App - contentDetailVideo Query error\n: ${JSON.stringify(err)}`);
+        //connection.release();
+        return res.json({
+            isSuccess: false,
+            code: 200,
+            message: "콘텐츠 상세 화면 비디오 & 나의 기록 조회 실패"
+        });
+    }
+};
