@@ -189,7 +189,7 @@ exports.signIn = async function (req, res) {
                     expiresIn: '365d',
                     subject: 'userInfo',
                 } // 유효 시간은 365일
-            )
+            );
 
             return res.json({
                 userInfo: userInfoRows[0],
@@ -250,14 +250,11 @@ exports.userProfileInfo = async function (req, res) {
 19. userInfo API = 특정 유저 정보
 */
 exports.userInfo = async function (req, res) {
-    const token = req.verifiedToken
 
-    //const userID = req.params.userId;
-    
-    const userID = token.userID
+    const userID = req.params.userId;
     
     try {
-        const [userInfoRows] = await userDao.userInfo(userID)
+        const [userInfoRows] = await userDao.userInfoQuery(userID)
 
         return res.json({
             userInfo: userInfoRows[0],
@@ -272,6 +269,37 @@ exports.userInfo = async function (req, res) {
             isSuccess: false,
             code: 200,
             message: "특정 유저 정보 조회 실패"
+        });
+    }
+};
+
+/*
+20. myInfo API = 내 정보
+*/
+exports.myInfo = async function (req, res) {
+
+    const token = req.verifiedToken
+    const userId = token.userID
+    logger.info(` token check ${token.userID}`);
+    
+    try {
+        //const connection = await pool.getConnection(async (conn) => conn)
+        const [userInfoRows] = await userDao.userInfoQuery(userId)
+
+        //connection.release()
+        return res.json({
+            userInfo: [userInfoRows],
+            isSuccess: true,
+            code: 200,
+            message: "내 정보 조회 성공"
+        });
+    } catch (err) {
+        logger.error(`App - myInfo Query error\n: ${JSON.stringify(err)}`);
+        //connection.release();
+        return res.json({
+            isSuccess: false,
+            code: 200,
+            message: "내 정보 조회 실패"
         });
     }
 };

@@ -120,7 +120,7 @@ async function selectUserProfileInfo(userID) {
 }
 
 // 특정 사용자 정보 가져오기
-async function userInfo(userID) {
+async function userInfoQuery(userID) {
     const connection = await pool.getConnection(async (conn) => conn);
     const userInfoQuery = `
                             SELECT *
@@ -159,5 +159,5 @@ module.exports = {
     selectPasswordInfo,
     selectUserProfileInfo,
     selectAllUserInfo,
-    userInfo,
+    userInfoQuery,
 };
