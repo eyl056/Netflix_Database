@@ -28,7 +28,7 @@ exports.favoriteContent = async function (req, res) {
         //connection.release();
         return res.json({
             isSuccess: false,
-            code: 200,
+            code: 400,
             message: "내가 찜한 콘텐츠 조회 실패"
         });
     }
@@ -54,7 +54,7 @@ exports.mainFavoriteContent = async function (req, res) {
         //connection.release();
         return res.json({
             isSuccess: false,
-            code: 200,
+            code: 400,
             message: "메인 - 내가 찜한 콘텐츠 조회 실패"
         });
     }
@@ -78,7 +78,7 @@ exports.popularContent = async function (req, res) {
         //connection.release();
         return res.json({
             isSuccess: false,
-            code: 200,
+            code: 400,
             message: "메인 - 지금 뜨는 콘텐츠 조회 실패"
         });
     }
@@ -102,7 +102,7 @@ exports.todayTop5Content = async function (req, res) {
         //connection.release();
         return res.json({
             isSuccess: false,
-            code: 200,
+            code: 400,
             message: "오늘 한국 TOP5 콘텐츠 조회 실패"
         });
     }
@@ -126,7 +126,7 @@ exports.netflixOriginalLatestContent = async function (req, res) {
         //connection.release();
         return res.json({
             isSuccess: false,
-            code: 200,
+            code: 400,
             message: "넷플릭스 오리지널 중 최신 콘텐츠 조회 실패"
         });
     }
@@ -152,7 +152,7 @@ exports.recommendedContent = async function (req, res) {
         //connection.release();
         return res.json({
             isSuccess: false,
-            code: 200,
+            code: 400,
             message: "시청 완료한 콘텐츠와 비슷한 콘텐츠 조회 실패"
         });
     }
@@ -179,7 +179,7 @@ exports.toBeReleasedContent = async function (req, res) {
         //connection.release();
         return res.json({
             isSuccess: false,
-            code: 200,
+            code: 400,
             message: "공개예정 콘텐츠 & 알람 여부 조회 실패"
         });
     }
@@ -204,7 +204,7 @@ exports.maxSearchContent = async function (req, res) {
         //connection.release();
         return res.json({
             isSuccess: false,
-            code: 200,
+            code: 400,
             message: "검색화면 - 최다 검색 콘텐츠 TOP5 조회 실패"
         });
     }
@@ -234,7 +234,7 @@ exports.savedContent = async function (req, res) {
         //connection.release();
         return res.json({
             isSuccess: false,
-            code: 200,
+            code: 400,
             message: "저장한 콘텐츠 목록 조회 실패"
         });
     }
@@ -263,7 +263,7 @@ exports.savedContentDetail = async function (req, res) {
         //connection.release();
         return res.json({
             isSuccess: false,
-            code: 200,
+            code: 400,
             message: "저장한 콘텐츠 목록 조회 실패"
         });
     }
@@ -297,7 +297,7 @@ exports.contentDetail = async function (req, res) {
         //connection.release();
         return res.json({
             isSuccess: false,
-            code: 200,
+            code: 400,
             message: "콘텐츠 상세 화면 정보 조회 실패"
         });
     }
@@ -332,7 +332,7 @@ exports.contentDetailVideo = async function (req, res) {
         //connection.release();
         return res.json({
             isSuccess: false,
-            code: 200,
+            code: 400,
             message: "콘텐츠 상세 화면 비디오 & 나의 기록 조회 실패"
         });
     }
@@ -362,7 +362,7 @@ exports.contentMore = async function (req, res) {
         //connection.release();
         return res.json({
             isSuccess: false,
-            code: 200,
+            code: 400,
             message: "콘텐츠 더보기 조회 실패"
         });
     }

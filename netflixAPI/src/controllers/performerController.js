@@ -27,7 +27,7 @@ exports.performerDetailInfo = async function (req, res) {
         //connection.release();
         return res.json({
             isSuccess: false,
-            code: 200,
+            code: 400,
             message: "출연자 정보 조회 실패"
         });
     }

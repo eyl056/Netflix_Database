@@ -14,5 +14,5 @@ module.exports = function(app) {
 
     app.get('/app/myInfo/:userId', jwtMiddleware, user.myInfo); // 내 정보 보기
 
-    app.get('/app/check', jwtMiddleware, user.check);
+    app.get('/app/check', jwtMiddleware, user.check); // 토큰 검증
 }

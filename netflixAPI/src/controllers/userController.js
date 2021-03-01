@@ -100,7 +100,7 @@ exports.signUp = async function (req, res) {
         // connection.release();
         return res.json({
             isSuccess: true,
-            code: 200,
+            code: 201,
             message: "회원가입 성공"
         });
 
@@ -195,7 +195,7 @@ exports.signIn = async function (req, res) {
                 userInfo: userInfoRows[0],
                 jwt: token,
                 isSuccess: true,
-                code: 200,
+                code: 201,
                 message: "로그인 성공"
             });
         }
@@ -240,7 +240,7 @@ exports.userProfileInfo = async function (req, res) {
         //connection.release();
         return res.json({
             isSuccess: false,
-            code: 200,
+            code: 400,
             message: "유저 프로필 정보 조회 실패"
         });
     }
@@ -267,7 +267,7 @@ exports.userInfo = async function (req, res) {
         //connection.release();
         return res.json({
             isSuccess: false,
-            code: 200,
+            code: 400,
             message: "특정 유저 정보 조회 실패"
         });
     }
@@ -298,7 +298,7 @@ exports.myInfo = async function (req, res) {
         //connection.release();
         return res.json({
             isSuccess: false,
-            code: 200,
+            code: 400,
             message: "내 정보 조회 실패"
         });
     }
@@ -322,7 +322,7 @@ exports.allUserInfo = async function (req, res) {
         //connection.release();
         return res.json({
             isSuccess: false,
-            code: 200,
+            code: 400,
             message: "전체 회원 조회 실패"
         });
     }
